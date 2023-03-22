@@ -1,0 +1,20 @@
+import paramikoimport os 
+
+# Establecer conexión SSH
+ssh = paramiko.SSHClient()
+ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+ssh.connect('direccion-del-servidor', port=22, username='tu-usuario', password='tu-contraseña') 
+
+# Configurar la ruta de origen y destino
+
+origen = '/ruta/local/de/la/carpeta'
+destino = '/ruta/remota/de/la/carpeta' 
+
+# Crear la carpeta en el servidor remoto
+
+ssh.exec_command('mkdir -p %s' % destino) 
+
+# Copiar los archivos desde el origen al destino
+
+sftp = ssh.open_sftp()for root, dirs, files in os.walk(origen):    for file in files:        local_path = os.path.join(root, file)        relative_path = os.path.relpath(local_path, origen)        remote_path = os.path.join(destino, relative_path)        
+sftp.put(local_path, remote_path) # Cerrar la conexiónsftp.close()ssh.close()
